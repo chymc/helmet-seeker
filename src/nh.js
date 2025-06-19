@@ -75,41 +75,31 @@ const game = createGame({
     1: {
       sprite: `4444444444\n4.........\n4.........\n4.........\n4.........\n4.........\n4.........\n4.........`,
       solid: false,
+      async onEnter(target) {
+        await checkHelmet(target, game, { x: 3, y: 2 });
+      },
     },
     2: {
       sprite: `4444444444\n.........4\n.........4\n.........4\n.........4\n.........4\n.........4\n.........4`,
       solid: false,
       async onEnter(target) {
-        const helmetWear = !game.getCell(1, 6).isOnScreen;
-        const falseAlert = Math.floor(Math.random() * 9) > 5;
-        if (helmetWear && falseAlert) {
-          await game.openMessage("Wait...");
-        }
-        if (!helmetWear || falseAlert) {
-          await game.openMessage("NO HELMET!");
-          game.player.sprite = `
-              ....4.....
-              ..444.....
-              444444..4.
-              .444444444
-              ..4444444.
-              .44..444..
-              .....44...
-              .....4....
-              `;
-          await game.playSound("EXPLOSION");
-          game.addToCell(6, 1, "e");
-        }
+        await checkHelmet(target, game, { x: 4, y: 2 });
       },
     },
 
     3: {
       sprite: `4.........\n4.........\n4.........\n4.........\n4.........\n4.........\n4.........\n4444444444`,
       solid: false,
+      async onEnter(target) {
+        await checkHelmet(target, game, { x: 3, y: 3 });
+      },
     },
     4: {
       sprite: `.........4\n.........4\n.........4\n.........4\n.........4\n.........4\n.........4\n4444444444`,
       solid: false,
+      async onEnter(target) {
+        await checkHelmet(target, game, { x: 4, y: 3 });
+      },
     },
 
     d: {
@@ -194,9 +184,9 @@ const game = createGame({
   },
   map: `
       xxxxxxxx
-      x....12x
-      x....34x
-      x.k....x
+      x.....kx
+      x..12..x
+      x..34..x
       x......x
       xwmwmwdx
       xh.....x
@@ -214,3 +204,26 @@ const game = createGame({
   cameraWidth: 1,
   cameraHeight: 1,
 });
+
+const checkHelmet = async (target, game, endPos) => {
+  const helmetWear = !game.getCell(1, 6).isOnScreen;
+  const falseAlert = Math.floor(Math.random() * 9) > 5;
+  if (helmetWear && falseAlert) {
+    await game.openMessage("Wait...");
+  }
+  if (!helmetWear || falseAlert) {
+    await game.openMessage("NO HELMET!");
+    game.player.sprite = `
+        ....4.....
+        ..444.....
+        444444..4.
+        .444444444
+        ..4444444.
+        .44..444..
+        .....44...
+        .....4....
+        `;
+    await game.playSound("EXPLOSION");
+    game.addToCell(endPos.x, endPos.y, "e");
+  }
+};
